@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Agreement information</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Required</th>
+      <th>Agreed date</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @agreements.each do |agreement| %>
+      <tr>
+        <td><%= agreement.uniqueid %></td>
+        <td><%= agreement.mustaccept %></td>
+        <td><%= agreement.accepted %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>

@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:13
+    env_file:
+      - .env.production
+    volumes:
+      - ./tmp/db/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    image: crud-app
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    env_file:
+      - .env.production
+    volumes:
+      - .:/devops
+    ports:
+      - "3001:3000"
+    depends_on:
+      - db
+      - migration
+
+  migration:
+    build: .
+    image: crud-app
+    command:
+      - /bin/bash
+      - -c
+      - |
+          rm -f tmp/pids/server.pid
+          bundle exec rails db:create
+          bundle exec rails db:migrate
+          bundle exec rails db:seed
+    env_file:
+      - .env.production
+    depends_on:
+      db:
+        condition: service_healthy
+    
