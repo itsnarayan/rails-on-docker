@@ -9,7 +9,6 @@ services:
       - .env.production
     volumes:
       - db-data:/var/lib/postgresql/data
-
   app:
     image: itsnarayankundgir/rails-app:1.0
     deploy:
@@ -23,9 +22,14 @@ services:
       - "3000:3000"
     volumes:
       - app-logs:/app/log
-
   db-migrate:
     image: itsnarayankundgir/rails-app:1.0
+    deploy:
+      labels:
+        com.replicated.ephemeral: "true"
+      restart_policy:
+        delay: 3s
+        condition: on-failure
     command:
       - /bin/bash
       - -c
@@ -34,17 +38,8 @@ services:
           bundle exec rails db:create
           bundle exec rails db:migrate
           bundle exec rails db:seed
-    deploy:
-      labels:
-        com.replicated.ephemeral: "true"
-      restart_policy:
-        delay: 3s
-        condition: on-failure
     env_file:
       - .env.production
-    # depends_on:
-    #   db:
-        
 volumes:
   db-data:
   app-logs:
