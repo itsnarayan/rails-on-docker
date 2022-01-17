@@ -15,7 +15,7 @@ sudo apt-get install unzip # Skip if its already installed
 unzip rails-on-docker.zip -d rails-on-docker
 ```
 
-NOTE : Import secret credentials and Build Application Image section can be skipped if purpose is just to deploy application with latest version.
+NOTE : **Import secret credentials** and **Build Application Image**section can be skipped if purpose is just to deploy application with latest version.
 
 ## Import secret credentials
 
@@ -110,7 +110,6 @@ docker stack rm rails_app
 docker volume rm rails_app_app-logs rails_app_db-data rails_app_web-logs
 ```
 
-
 ## Problems faced during migration
 
 - When changing from development to production environment.
@@ -140,10 +139,19 @@ https://betterprogramming.pub/setting-up-rails-with-postgres-using-docker-426c85
 - To reduce image size from 1.5 GB to 183MB
  https://medium.com/@lemuelbarango/ruby-on-rails-smaller-docker-images-bff240931332
 
+- For docker compose and stack
+https://docs.docker.com/engine/swarm/stack-deploy/
+https://docs.docker.com/compose/
+
+- Docker-compose replicas with nginx reverse proxy
+https://forums.docker.com/t/docker-compose-replicas-with-nginx-reverse-proxy/118695
+
 - For SSL Certificate
 https://www.humankode.com/ssl/create-a-selfsigned-certificate-for-nginx-in-5-minutes
 https://faun.pub/setting-up-ssl-certificates-for-nginx-in-docker-environ-e7eec5ebb418
 
-- For docker compose and stack
-https://docs.docker.com/engine/swarm/stack-deploy/
-https://docs.docker.com/compose/
+
+## Future scope of automation
+ - Create Jenkins pipelie file to build,test and deploy application end to end.
+ - Secrets to be passed as jenkins credentials which will be secure. 
+ - Migrating same infra to either kubernetes or cloud provider solution like Amazon ECS, GKE etc.
