@@ -1,4 +1,4 @@
-# Rails on docker migration from legacy to microservice architecture
+# Migrate Rails app from legacy to docker environment
 
 ## Overview
 This document explains procedure to setup this rails application in local machine as a production enviroment using docker.
@@ -26,7 +26,8 @@ unzip secrets.zip -d rails-on-docker-secrets
 cd rails-on-docker-secrets
 cp master.key  <rel-path-source-code-dir>/config/master.key
 cp production.key <rel-path-source-code-dir>/config/credenntials/production.key
-cp .env.production .env.development <rel-path-source-code-dir>/build/
+cp env.development <rel-path-source-code-dir>/build/.env.development
+cp env.production <rel-path-source-code-dir>/build/.env.production
 
 cp localhost.crt <rel-path-source-code-dir>/nginx/data/cert/localhost.crt
 cp localhost.key <rel-path-source-code-dir>/nginx/data/cert/localhost.key
@@ -71,6 +72,7 @@ docker-compose.yml file is parsed using docker-compose config option to succesff
 Reason is, In recent version docker stopped supporting env files parameters. Can pass as individiual parmeter in compose but it will lead into secret leakage in source code repo.
 
 - Check all services are up and running, Destroy and re-deploy in case of any error - Refer 
+
 Reference output
 ```
 $ docker stack deploy -c <(docker-compose config) rails_app
@@ -112,7 +114,7 @@ docker volume rm rails_app_app-logs rails_app_db-data rails_app_web-logs
 ## Problems faced during migration
 
 - When changing from development to production environment.
- Secret key base is required to pass. Generated secret key base value by running cotainer.
+ Secret key base is required to pass. Generated secret key base value by running container.
  ```
  bin/rails c
  Rails.application.credentials.config
@@ -125,7 +127,7 @@ docker volume rm rails_app_app-logs rails_app_db-data rails_app_web-logs
  - Docker swarm doesnt support env file as file parameter. Need to declare Environment variables in compose for each service.
  solution used is , `docker-compose config`   which will complie file during execution and pass environnment variables on the fly.
 
- 
+
 ## References I read
 
 - For docker Image creation
@@ -145,5 +147,3 @@ https://faun.pub/setting-up-ssl-certificates-for-nginx-in-docker-environ-e7eec5e
 - For docker compose and stack
 https://docs.docker.com/engine/swarm/stack-deploy/
 https://docs.docker.com/compose/
-
-
