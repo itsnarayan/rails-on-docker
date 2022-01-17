@@ -2,26 +2,43 @@ version: '3.8'
 services:
   db:
     image: postgres:13
-    restart: always
+    # restart: always
     ports:
       - "5434:5432"
     env_file:
       - .env.production
     volumes:
       - db-data:/var/lib/postgresql/data
+    networks:
+      - back-tier
+
+  web:
+    image: nginx:1.21-alpine
+    volumes:
+      - ./nginx/conf:/etc/nginx/templates
+      - ./nginx/data/cert:/etc/ssl
+      - web-logs:/var/log
+    ports:
+      # - "8081:80"
+      - "8443:443"
+    networks:
+      - front-tier
+
   app:
     image: itsnarayankundgir/rails-app:1.0
     deploy:
-      replicas: 1
+      replicas: 2
       restart_policy:
         delay: 3s
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     env_file:
       - .env.production
-    ports:
-      - "3000:3000"
     volumes:
       - app-logs:/app/log
+    networks:
+      - front-tier
+      - back-tier
+
   db-migrate:
     image: itsnarayankundgir/rails-app:1.0
     deploy:
@@ -40,6 +57,14 @@ services:
           bundle exec rails db:seed
     env_file:
       - .env.production
+    networks:
+      - back-tier
+
 volumes:
   db-data:
   app-logs:
+  web-logs:
+
+networks:
+  front-tier:
+  back-tier:

@@ -39,9 +39,20 @@
 yarn-debug.log*
 .yarn-integrity
 
-# Secret keys and environment variable files
+
+# Ignore production key for decrypting credentials and more.
 /config/credentials/production.key
+
+# Ignore environment file to secure application secrets 
 /build/.env.production
 /build/.env.development
+
+# Ignore environment file to secure application secrets 
+/build/.env.production
+/build/.env.development
+
+# Ignore SSL certificates used for nginx https requests
+/nginx/data/cert/localhost.crt
+/nginx/data/cert/localhost.key
 
 .gitconfig
