@@ -15,7 +15,7 @@ sudo apt-get install unzip # Skip if its already installed
 unzip rails-on-docker.zip -d rails-on-docker
 ```
 
-NOTE : **Import secret credentials** and **Build Application Image**section can be skipped if purpose is just to deploy application with latest version.
+ **_NOTE:_** :  **Import secret credentials** and **Build Application Image**section can be skipped if purpose is just to deploy application with latest version.
 
 ## Import secret credentials
 
@@ -26,8 +26,8 @@ unzip secrets.zip -d rails-on-docker-secrets
 cd rails-on-docker-secrets
 cp master.key  <rel-path-source-code-dir>/config/master.key
 cp production.key <rel-path-source-code-dir>/config/credenntials/production.key
-cp env.development <rel-path-source-code-dir>/build/.env.development
-cp env.production <rel-path-source-code-dir>/build/.env.production
+cp env.production <rel-path-source-code-dir>/.env.production #for image creation
+cp env.production <rel-path-source-code-dir>/build/.env.production #for compose file
 
 cp localhost.crt <rel-path-source-code-dir>/nginx/data/cert/localhost.crt
 cp localhost.key <rel-path-source-code-dir>/nginx/data/cert/localhost.key
@@ -43,17 +43,13 @@ cd build
 ```
 docker build -t itsnarayankundgir/rails-app:<version-no> .
 ```
-NOTE
-Change `<version-no>` with actual version number e.g. `1.0`
+ **_NOTE:_** :  Change `<version-no>` with actual version number e.g. `1.0`
 
 - Push Application image to public repository 
 ```
-docker build -t itsnarayankundgir/rails-app:<version-no> .
+docker push itsnarayankundgir/rails-app:<version-no>
 ```
-NOTE
-Dockerhub public repository is used to push application image , this is not idea approach in real time scenario. Usually organization maintain their own repositoery manager like nexus.
-This code is pushed to public repo as its just sample application without any secret or confidential information.
-
+ **_NOTE:_** :  Dockerhub public repository is used to push application image , this is not idea approach in real time scenario. Usually organization maintain their own repositoery manager like nexus. This code is pushed to public repo as its just sample application without any secret or confidential information.
 
 ## Deploy Application stack
 Now, we will use Docker-compose files to build application stack using docker stack orchestrator.
@@ -67,9 +63,7 @@ docker swarm init
 docker stack deploy -c <(docker-compose config) rails_app
 ```
 
-NOTE
-docker-compose.yml file is parsed using docker-compose config option to succesffuly pass .env file variables into each services.
-Reason is, In recent version docker stopped supporting env files parameters. Can pass as individiual parmeter in compose but it will lead into secret leakage in source code repo.
+ **_NOTE:_** :  docker-compose.yml file is parsed using docker-compose config option to succesffuly pass .env file variables into each services. Reason is, In recent version docker stopped supporting env files parameters. Can pass as individiual parmeter in compose but it will lead into secret leakage in source code repo.
 
 - Check all services are up and running, Destroy and re-deploy in case of any error - Refer 
 
@@ -129,25 +123,25 @@ docker volume rm rails_app_app-logs rails_app_db-data rails_app_web-logs
 
 ## References I read
 
-- For docker Image creation
+- For docker Image creation <br/>
 https://docs.docker.com/samples/rails/
 
-- For runing rail service using docker
-https://qiita.com/d0ne1s/items/f724a08119bad2973e46
+- For runing rail service using docker <br/>
+https://qiita.com/d0ne1s/items/f724a08119bad2973e46 <br/>
 https://betterprogramming.pub/setting-up-rails-with-postgres-using-docker-426c853e8590
 
-- To reduce image size from 1.5 GB to 183MB
- https://medium.com/@lemuelbarango/ruby-on-rails-smaller-docker-images-bff240931332
+- To reduce image size from 1.5 GB to 183MB <br/>
+https://medium.com/@lemuelbarango/ruby-on-rails-smaller-docker-images-bff240931332
 
-- For docker compose and stack
-https://docs.docker.com/engine/swarm/stack-deploy/
+- For docker compose and stack  <br/>
+https://docs.docker.com/engine/swarm/stack-deploy/ <br/>
 https://docs.docker.com/compose/
 
-- Docker-compose replicas with nginx reverse proxy
+- Docker-compose replicas with nginx reverse proxy <br/>
 https://forums.docker.com/t/docker-compose-replicas-with-nginx-reverse-proxy/118695
 
-- For SSL Certificate
-https://www.humankode.com/ssl/create-a-selfsigned-certificate-for-nginx-in-5-minutes
+- For SSL Certificate <br/>
+https://www.humankode.com/ssl/create-a-selfsigned-certificate-for-nginx-in-5-minutes <br/>
 https://faun.pub/setting-up-ssl-certificates-for-nginx-in-docker-environ-e7eec5ebb418
 
 
